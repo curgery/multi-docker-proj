@@ -1,0 +1,24 @@
+sudo: required
+services:
+  - docker
+
+before_installs:
+  - docker build -t dockmaker54/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run dockmaker54/react-test npm test -- --coverage
+
+
+after_success:
+  - docker build -t dockmaker54/multi-client ./client
+  - docker build -t dockmaker54/multi-nginx ./nginx
+  - docker build -t dockmaker54/multi-server ./server
+  - docker build -t dockmaker54/multi-worker ./worker
+  #Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #take those images and push to dockerhub
+  - docker push dockmaker54/multi-client
+  - docker push dockmaker54/multi-nginx
+  - docker push dockmaker54/multi-server
+  - docker push dockmaker54/multi-worker
+
