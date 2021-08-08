@@ -6,7 +6,7 @@ before_installs:
   - docker build -t dockmaker54/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run dockmaker54/react-test npm test -- --coverage
+  - docker run -e CI=true dockmaker54/react-test npm test
 
 
 after_success:
